@@ -25,5 +25,33 @@ describe('login page', () => {
       expect(elements[0].validationMessage).to.be.eql('Заполните это поле.')
     })
   })
+
+  it("should book add to Favorites", () => {
+    cy.login('test@test.com', 'test');
+    cy.addBook(
+      "Триумфальная арка",
+      "Пронзительная история любви всему наперекор, любви, приносящей боль, но и дарующей бесконечную радость. Место действия - Париж накануне Второй мировой войны. Герой - беженец из Германии, без документов, скрывающийся и от французов, и от нацистов, хирург, спасающий человеческие жизни.",
+      "Ремарк Эрих Мария"
+    );
+    cy.contains("Триумфальная арка").as("selectedBook");
+    cy.get("@selectedBook")
+      .find("button")
+      .invoke("text")
+      .then((text) => {
+        if (text === "Add to favorite") {
+          cy.get("@selectedBook").find("button").click();
+        }
+      });
+    cy.contains("Favorites").click();
+    cy.contains("Ремарк Эрих Мария").should("be.visible");
+  });
+
+  it("should book delete with Favorites", () => {
+    cy.login('test@test.com', 'test');
+    cy.deleteBook("Триумфальная арка");
+    cy.contains("Please add some book to favorit on home page!").should(
+      "be.visible"
+    );
+  });
 })
 

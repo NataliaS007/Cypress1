@@ -37,3 +37,33 @@ Cypress.Commands.add('login', (email, password) => {
     
     cy.contains('Submit').click()
 })
+
+Cypress.Commands.add("addBook", (title, description, authors) => {
+    cy.contains("Add new").click();
+    if (title) {
+      cy.get("#title").type(title);
+    }
+    if (description) {
+      cy.get("#description").type(description);
+    }
+    if (authors) {
+      cy.get("#authors").type(authors);
+    }
+    cy.contains("Submit").click();
+  });
+  
+  Cypress.Commands.add("deleteBook", (title) => {
+    cy.contains("Favorites").click();
+    cy.contains(title).as("selectedBook");
+    cy.get("@selectedBook")
+      .find("button")
+      .invoke("text")
+      .then((text) => {
+        if (text === "Add to favorite") {
+          cy.get("@selectedBook").find("button").click();
+        }
+      });
+    cy.get("@selectedBook")
+      .find('button:contains("Delete from favorite")')
+      .click();
+  });
